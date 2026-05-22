@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Portal das Origens — Sabedoria Digital</title>
+<meta name="description" content="Plataforma imersiva que conecta raízes ao futuro: lendas, cantos, relatos e saberes dos povos originários do Brasil." />
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: {
+        serif: ['Fraunces', 'serif'],
+        sans: ['Inter', 'sans-serif'],
+      },
+      colors: {
+        cream: '#fcfbf8',
+        creamdk: '#f5f2ec',
+        forest: { 50:'#eef3ee', 600:'#1f3b2a', 700:'#16301f', 800:'#0f2417', 900:'#091a10' },
+        clay:   { 400:'#e08667', 500:'#c4533a', 600:'#a94025', 700:'#7d2f1c' },
+        sand:   '#f3dcc7',
+        ink:    '#1b1b1b',
+      },
+      boxShadow: {
+        soft: '0 8px 30px -12px rgba(15,36,23,.18)',
+        ring: '0 0 0 1px rgba(15,36,23,.06), 0 10px 40px -12px rgba(15,36,23,.20)',
+      }
+    }
+  }
+}
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: #fcfbf8; color: #0f2417; }
+  .font-display { font-family: 'Fraunces', serif; font-optical-sizing: auto; letter-spacing: -0.01em; }
+  .dark body { background: #0b170f; color: #ecead8; }
+  .grain::before {
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:1; opacity:.04;
+    background-image: radial-gradient(rgba(0,0,0,.6) 1px, transparent 1px);
+    background-size: 3px 3px;
+  }
+  .wave { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 8'><path d='M0 4 Q 10 0 20 4 T 40 4 T 60 4 T 80 4' fill='none' stroke='%23c4533a' stroke-width='1.2'/></svg>");
+    background-repeat: repeat-x; background-size: 80px 8px; height: 8px;
+  }
+  .reveal { opacity:0; transform: translateY(16px); transition: all .8s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in { opacity:1; transform:none; }
+  .hide { display:none !important; }
+  .scroll-hidden::-webkit-scrollbar { display:none; }
+  .scroll-hidden { scrollbar-width: none; }
+  .ring-focus:focus-visible { outline: 2px solid #c4533a; outline-offset: 2px; }
+  details > summary { list-style: none; cursor: pointer; }
+  details > summary::-webkit-details-marker { display: none; }
+  .marquee { mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+  @keyframes scrollx { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  .marquee-track { animation: scrollx 40s linear infinite; }
+  
+  /* Animação das barras de áudio controlada por classe */
+  .audio-bars { display:flex; gap:3px; align-items:flex-end; height:24px; }
+  .audio-bars span { width:3px; background:#c4533a; border-radius:2px; height: 4px; }
+  .audio-bars.playing span { animation: bar 1.1s ease-in-out infinite; }
+  .audio-bars.playing span:nth-child(1){animation-delay:-.2s}
+  .audio-bars.playing span:nth-child(2){animation-delay:-.6s}
+  .audio-bars.playing span:nth-child(3){animation-delay:-.4s}
+  .audio-bars.playing span:nth-child(4){animation-delay:-.8s}
+  .audio-bars.playing span:nth-child(5){animation-delay:-.1s}
+  @keyframes bar { 0%,100%{height:4px} 50%{height:22px} }
+  
+  .map-dot { animation: pulse 2.4s ease-out infinite; transform-origin: center; }
+  @keyframes pulse { 0%{ box-shadow:0 0 0 0 rgba(196,83,58,.6)} 70%{box-shadow:0 0 0 14px rgba(196,83,58,0)} 100%{box-shadow:0 0 0 0 rgba(196,83,58,0)} }
+  .hero-vignette::after{ content:""; position:absolute; inset:0; background: radial-gradient(ellipse at center, transparent 30%, rgba(9,26,16,.65) 100%); pointer-events:none; }
+  .btn-primary { background:#16301f; color:#fcfbf8; }
+  .btn-primary:hover { background:#0f2417; }
+  .btn-clay { background:#c4533a; color:#fff; }
+  .btn-clay:hover { background:#a94025; }
+  .dark .bg-cream { background:#0b170f !important; }
+  .dark .bg-creamdk { background:#11241a !important; }
+  .dark .text-forest-800 { color:#ecead8 !important; }
+  .dark .text-forest-700 { color:#d8d3bd !important; }
+  .dark .text-forest-600 { color:#b8b297 !important; }
+  .dark .border-forest-800\/10 { border-color: rgba(236,234,216,.10) !important; }
+  .dark .bg-white { background:#11241a !important; }
+  .dark .text-ink { color:#ecead8 !important; }
+  .dark .ring-1.ring-forest-800\/10 { box-shadow: inset 0 0 0 1px rgba(236,234,216,.08) !important; }
+</style>
+</head>
+<body class="grain antialiased">
+
+<audio id="ancestralAudio" loop src="https://assets.mixkit.co/active_storage/sfx/2448/2448-84.wav"></audio>
+
+<header class="sticky top-0 z-40 backdrop-blur bg-cream/80 dark:bg-forest-900/80 border-b border-forest-800/10">
+  <div class="max-w-7xl mx-auto px-5 md:px-8 h-16 flex items-center justify-between">
+    <a href="#home" class="flex items-center gap-2">
+      <svg viewBox="0 0 24 24" class="w-7 h-7 text-clay-600" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2c3 4 3 7 0 10s-3 6 0 10"/><path d="M2 12c4-3 7-3 10 0s6 3 10 0"/></svg>
+      <span class="font-display text-xl md:text-2xl font-bold">Portal das Origens</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-7 text-sm font-medium">
+      <a href="#biblioteca" class="hover:text-clay-600 transition">Biblioteca</a>
+      <a href="#cantos" class="hover:text-clay-600 transition">Cantos</a>
+      <a href="#fogueira" class="hover:text-clay-600 transition">Fogueira Digital</a>
+      <a href="#mapa" class="hover:text-clay-600 transition">Mapa Etno</a>
+      <a href="#cofre" class="hover:text-clay-600 transition">Cofre</a>
+      <a href="#pitch" class="text-clay-600 font-bold hover:text-clay-700 transition">Nossa Proposta</a>
+    </nav>
+    <div class="flex items-center gap-2">
+      <button id="searchBtn" aria-label="Buscar" class="w-10 h-10 grid place-items-center rounded-full hover:bg-creamdk ring-focus">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      </button>
+      <button id="themeBtn" aria-label="Alternar tema" class="w-10 h-10 grid place-items-center rounded-full hover:bg-creamdk ring-focus">
+        <svg id="iconSun" class="w-5 h-5 hide" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg id="iconMoon" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+      </button>
+      <button id="menuBtn" aria-label="Menu" class="md:hidden w-10 h-10 grid place-items-center rounded-full hover:bg-creamdk ring-focus">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </div>
+  <div id="searchBar" class="hide border-t border-forest-800/10 bg-cream dark:bg-forest-900">
+    <div class="max-w-7xl mx-auto px-5 md:px-8 py-3 flex items-center gap-3">
+      <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="searchInput" placeholder="Buscar lendas, cantos, povos…" class="flex-1 bg-transparent outline-none text-sm py-1" />
+      <kbd class="text-[10px] uppercase tracking-wider opacity-60 hidden sm:inline">esc</kbd>
+    </div>
+  </div>
+  <div id="mobileMenu" class="hide md:hidden border-t border-forest-800/10 bg-cream dark:bg-forest-900">
+    <nav class="px-5 py-4 flex flex-col gap-3 text-sm font-medium">
+      <a href="#biblioteca">Biblioteca de Saberes</a>
+      <a href="#cantos">Cantos Ancestrais</a>
+      <a href="#fogueira">Fogueira Digital</a>
+      <a href="#mapa">Mapa Etno</a>
+      <a href="#cofre">Cofre de Saberes</a>
+      <a href="#pitch">Nossa Proposta (Pitch)</a>
+    </nav>
+  </div>
+</header>
+
+<section id="home" class="relative overflow-hidden">
+  <div class="hero-vignette relative h-[88vh] min-h-[560px] w-full">
+    <img src="https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&w=2000&q=80" alt="Floresta amazônica ao amanhecer" class="absolute inset-0 w-full h-full object-cover"/>
+    <div class="absolute inset-0 bg-gradient-to-b from-forest-900/40 via-forest-900/30 to-forest-900/80"></div>
+    <div class="relative z-10 h-full max-w-7xl mx-auto px-5 md:px-8 flex flex-col justify-end pb-20 md:pb-28 text-cream">
+      <div class="reveal max-w-3xl">
+        <p class="text-xs md:text-sm tracking-[0.3em] uppercase mb-5 text-sand">O Legado de Pindorama</p>
+        <h1 class="font-display text-5xl md:text-7xl leading-[1.02] font-bold">Conectando<br/>raízes ao futuro.</h1>
+        <p class="mt-6 text-base md:text-lg text-cream/80 max-w-xl">Uma jornada imersiva pelas lendas, cantos e memórias dos povos originários do Brasil — narrada por quem guarda o tempo.</p>
+        <div class="mt-9 flex flex-wrap gap-3">
+          <a href="#biblioteca" class="btn-clay inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold ring-focus">
+            Entrar no Portal
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+          <a href="#mapa" class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold border border-cream/40 hover:bg-cream/10 ring-focus">
+            Explorar o Mapa
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-forest-800 text-cream/80 py-3 border-y border-cream/10 overflow-hidden marquee">
+    <div class="marquee-track flex gap-10 whitespace-nowrap text-xs tracking-[0.35em] uppercase">
+      <span>Tupi-Guarani</span><span>•</span><span>Yanomami</span><span>•</span><span>Kayapó</span><span>•</span><span>Tikuna</span><span>•</span><span>Huni Kuin</span><span>•</span><span>Xavante</span><span>•</span><span>Guajajara</span><span>•</span><span>Bororo</span><span>•</span><span>Marajoara</span><span>•</span><span>Mundurucu</span><span>•</span>
+      <span>Tupi-Guarani</span><span>•</span><span>Yanomami</span><span>•</span><span>Kayapó</span><span>•</span><span>Tikuna</span><span>•</span><span>Huni Kuin</span><span>•</span><span>Xavante</span><span>•</span><span>Guajajara</span><span>•</span><span>Bororo</span><span>•</span><span>Marajoara</span><span>•</span><span>Mundurucu</span><span>•</span>
+    </div>
+  </div>
+</section>
+
+<section class="max-w-7xl mx-auto px-5 md:px-8 py-20 md:py-28">
+  <div class="grid md:grid-cols-12 gap-10 items-end">
+    <div class="md:col-span-7 reveal">
+      <div class="wave w-24 mb-6"></div>
+      <h2 class="font-display text-4xl md:text-5xl font-bold leading-tight">Mapeando a alma das nossas origens.</h2>
+      <p class="mt-5 text-forest-700 max-w-xl text-lg">Cada artefato, canto e palavra preservados aqui são uma vitória da memória sobre o esquecimento. Construído em parceria com pajés, anciãos e pesquisadores indígenas.</p>
+    </div>
+    <div class="md:col-span-5 grid grid-cols-3 gap-4">
+      <div class="bg-creamdk dark:bg-forest-700 p-5 rounded-2xl">
+        <div class="font-display text-3xl font-bold text-clay-600">+240</div>
+        <p class="text-xs mt-1 uppercase tracking-wider opacity-70">Lendas vivas</p>
+      </div>
+      <div class="bg-creamdk dark:bg-forest-700 p-5 rounded-2xl">
+        <div class="font-display text-3xl font-bold text-clay-600">86</div>
+        <p class="text-xs mt-1 uppercase tracking-wider opacity-70">Etnias</p>
+      </div>
+      <div class="bg-creamdk dark:bg-forest-700 p-5 rounded-2xl">
+        <div class="font-display text-3xl font-bold text-clay-600">1.2k</div>
+        <p class="text-xs mt-1 uppercase tracking-wider opacity-70">Relatos</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="biblioteca" class="bg-creamdk dark:bg-forest-800 py-20 md:py-28">
+  <div class="max-w-7xl mx-auto px-5 md:px-8">
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 reveal">
+      <div>
+        <p class="text-xs tracking-[0.3em] uppercase text-clay-600 mb-3">Acervo Digital</p>
+        <h2 class="font-display text-4xl md:text-5xl font-bold">Biblioteca de Saberes</h2>
+        <p class="mt-4 text-forest-700 max-w-2xl">Mergulhe nas narrativas ancestrais que atravessam o nosso território.</p>
+      </div>
+      <div class="text-sm font-medium opacity-70">12 / 240 histórias</div>
+    </div>
+
+    <div id="filters" class="mt-8 flex flex-wrap gap-2 scroll-hidden overflow-x-auto">
+      <button data-f="todos" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-forest-800 text-cream">Todos</button>
+      <button data-f="tupi" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-sand text-forest-800 hover:bg-clay-400 hover:text-white transition">Tupi-Guarani</button>
+      <button data-f="yano" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-sand text-forest-800 hover:bg-clay-400 hover:text-white transition">Yanomami</button>
+      <button data-f="mitos" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-sand text-forest-800 hover:bg-clay-400 hover:text-white transition">Mitos de Criação</button>
+      <button data-f="grafia" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-sand text-forest-800 hover:bg-clay-400 hover:text-white transition">Grafismos</button>
+    </div>
+
+    <div id="storyGrid" class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </div>
+</section>
+
+<section id="cantos" class="bg-forest-800 text-cream py-20 md:py-28 relative overflow-hidden">
+  <div class="absolute inset-0 opacity-[0.05]" style="background-image: radial-gradient(circle at 20% 30%, #fcfbf8 0, transparent 40%), radial-gradient(circle at 80% 70%, #c4533a 0, transparent 40%);"></div>
+  <div class="max-w-7xl mx-auto px-5 md:px-8 relative">
+    <div class="reveal">
+      <p class="text-xs tracking-[0.3em] uppercase text-clay-400 mb-3">Sons da Mata</p>
+      <h2 class="font-display text-4xl md:text-5xl font-bold">Cantos Ancestrais</h2>
+      <div class="wave w-24 mt-5"></div>
+      <p class="mt-5 max-w-xl text-cream/70">Sintonize com as frequências da terra e do espírito (clique no botão de play abaixo para escutar).</p>
+    </div>
+
+    <div class="mt-12 grid lg:grid-cols-12 gap-8 items-start">
+      <div class="lg:col-span-5 bg-forest-700 rounded-3xl p-6 md:p-8 shadow-ring">
+        <div class="aspect-square w-full rounded-2xl bg-gradient-to-br from-clay-700 via-forest-800 to-forest-900 grid place-items-center relative overflow-hidden">
+          <div class="absolute inset-0 opacity-30" style="background:repeating-radial-gradient(circle at center, rgba(255,255,255,.05) 0 1px, transparent 1px 8px);"></div>
+          <div class="relative text-center">
+            <div id="visualizerBars" class="audio-bars mx-auto mb-4 justify-center"><span></span><span></span><span></span><span></span><span></span></div>
+            <p id="playerTitle" class="font-display text-2xl">Canto de Cura Yanomami</p>
+            <p id="playerPovo" class="text-xs uppercase tracking-[0.3em] mt-2 text-clay-400">Ritual Xapiri</p>
+          </div>
+        </div>
+        <div class="mt-6">
+          <div class="flex justify-between text-xs opacity-70 mb-2"><span id="curTime">00:00</span><span id="totalTime">00:08</span></div>
+          <div class="h-1.5 bg-cream/10 rounded-full overflow-hidden"><div id="progress" class="h-full bg-clay-500" style="width:0%"></div></div>
+          <div class="mt-5 flex items-center justify-between">
+            <button class="opacity-70 hover:opacity-100"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h2v16H6zM10 12l10 8V4z"/></svg></button>
+            <div class="flex items-center gap-4">
+              <button class="opacity-70 hover:opacity-100"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m11 19-7-7 7-7M20 19l-7-7 7-7"/></svg></button>
+              
+              <button id="playBtn" class="w-14 h-14 rounded-full bg-clay-500 hover:bg-clay-600 grid place-items-center transition ring-focus">
+                <svg id="pauseI" class="w-6 h-6 hide" fill="currentColor" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+                <svg id="playI" class="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+              
+              <button class="opacity-70 hover:opacity-100"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m13 5 7 7-7 7M4 5l7 7-7 7"/></svg></button>
+            </div>
+            <button class="opacity-70 hover:opacity-100"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7 space-y-4">
+        <div class="bg-forest-700 rounded-3xl p-6 md:p-8">
+          <div class="flex items-center justify-between mb-5">
+            <p class="text-xs uppercase tracking-[0.3em] opacity-70">Lista de reprodução</p>
+            <span class="text-xs opacity-70">5 canções</span>
+          </div>
+          <ul id="playlist" class="divide-y divide-cream/10"></ul>
+        </div>
+        <div class="bg-clay-600 text-cream rounded-3xl p-6 md:p-8">
+          <p class="text-xs uppercase tracking-[0.3em] mb-3 opacity-80">Nota do Curador</p>
+          <p class="font-display text-xl leading-snug">"A música, para os povos tradicionais, não é entretenimento — é tecnologia espiritual de conexão entre o ser humano e a ancestralidade da floresta."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="fogueira" class="py-20 md:py-28 bg-cream">
+  <div class="max-w-7xl mx-auto px-5 md:px-8">
+    <div class="grid lg:grid-cols-12 gap-10">
+      <aside class="lg:col-span-3 space-y-6">
+        <div class="reveal">
+          <p class="text-xs tracking-[0.3em] uppercase text-clay-600 mb-3">Comunidade</p>
+          <h2 class="font-display text-4xl font-bold leading-tight">Fogueira Digital</h2>
+          <p class="mt-4 text-forest-700 text-sm">Um espaço sagrado para compartilhar vivências, ensinamentos e a perpetuação da memória através da voz e da imagem.</p>
+        </div>
+        <div class="border-l-2 border-clay-500 pl-4">
+          <p class="font-display italic text-forest-800">"A palavra é uma semente que viaja no vento do tempo."</p>
+          <p class="text-xs uppercase tracking-wider opacity-60 mt-2">— Provérbio Ancestral</p>
+        </div>
+        <div class="bg-creamdk rounded-2xl p-5">
+          <p class="text-xs uppercase tracking-wider opacity-70 mb-3">Tópicos em alta</p>
+          <div class="flex flex-wrap gap-2 text-xs">
+            <span class="px-3 py-1 bg-white rounded-full ring-1 ring-forest-800/10">#ancestralidade</span>
+            <span class="px-3 py-1 bg-white rounded-full ring-1 ring-forest-800/10">#grafismo</span>
+            <span class="px-3 py-1 bg-white rounded-full ring-1 ring-forest-800/10">#cura</span>
+            <span class="px-3 py-1 bg-white rounded-full ring-1 ring-forest-800/10">#território</span>
+          </div>
+        </div>
+      </aside>
+
+      <div class="lg:col-span-9 space-y-6">
+        <div class="bg-forest-800 text-cream rounded-3xl p-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-5">
+          <div>
+            <p class="font-display text-2xl">Semear um relato</p>
+            <p class="text-sm opacity-70 mt-1">Compartilhe uma vivência, um som ou uma imagem com o círculo.</p>
+          </div>
+          <button onclick="openCompose()" class="btn-clay inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold ring-focus self-start md:self-auto">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            Partilhar relato
+          </button>
+        </div>
+
+        <div id="feed" class="space-y-6"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="mapa" class="py-20 md:py-28 bg-forest-900 text-cream relative overflow-hidden">
+  <div class="max-w-7xl mx-auto px-5 md:px-8 grid lg:grid-cols-12 gap-10 items-center">
+    <div class="lg:col-span-5 reveal">
+      <p class="text-xs tracking-[0.3em] uppercase text-clay-400 mb-3">Cartografia ancestral</p>
+      <h2 class="font-display text-4xl md:text-5xl font-bold">Mapa Etno do Brasil</h2>
+      <p class="mt-5 text-cream/70 max-w-md">Toque nos territórios para conhecer os povos que tecem o tecido ancestral da nossa terra. Cada ponto é uma cosmologia viva.</p>
+      <div id="regionInfo" class="mt-8 bg-forest-800 rounded-2xl p-6 border border-cream/10">
+        <p class="text-xs uppercase tracking-[0.3em] text-clay-400">Selecionado</p>
+        <p id="regionName" class="font-display text-2xl mt-2">Alto Rio Negro</p>
+        <p id="regionPeople" class="text-sm text-cream/70 mt-1">Tikuna (Magüta) • Tukano • Baré</p>
+        <p id="regionDesc" class="text-sm text-cream/80 mt-4 leading-relaxed">Região onde nascem os mitos das águas que conectam o world físico ao espiritual. Berço de mais de 22 etnias coexistindo em três grandes famílias linguísticas.</p>
+      </div>
+    </div>
+    <div class="lg:col-span-7">
+      <div class="relative aspect-[5/6] max-w-md mx-auto">
+        <svg viewBox="0 0 400 480" class="w-full h-full">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0%" stop-color="#16301f"/>
+              <stop offset="100%" stop-color="#0b170f"/>
+            </linearGradient>
+          </defs>
+          <path fill="url(#g1)" stroke="rgba(252,251,248,.25)" stroke-width="1.2" d="M150 30 C200 20 260 40 290 70 C330 95 350 140 360 190 C370 230 360 270 340 310 C320 350 290 390 250 420 C220 445 180 460 150 450 C115 440 90 410 75 370 C60 330 55 290 60 250 C55 215 60 180 80 140 C95 100 115 60 150 30 Z"/>
+        </svg>
+        <button onclick="setRegion('rio-negro')" class="absolute w-3 h-3 rounded-full bg-clay-500 map-dot" style="top:22%; left:30%"></button>
+        <button onclick="setRegion('xingu')" class="absolute w-3 h-3 rounded-full bg-clay-500 map-dot" style="top:42%; left:50%"></button>
+        <button onclick="setRegion('marajo')" class="absolute w-3 h-3 rounded-full bg-clay-500 map-dot" style="top:25%; left:55%"></button>
+        <button onclick="setRegion('acre')" class="absolute w-3 h-3 rounded-full bg-clay-500 map-dot" style="top:48%; left:22%"></button>
+        <button onclick="setRegion('chapada')" class="absolute w-3 h-3 rounded-full bg-clay-500 map-dot" style="top:60%; left:55%"></button>
+        <button onclick="setRegion('maranhao')" class="absolute w-3 h-3 rounded-full bg-clay-500 map-dot" style="top:33%; left:67%"></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cofre" class="py-20 md:py-28 bg-creamdk">
+  <div class="max-w-7xl mx-auto px-5 md:px-8">
+    <div class="grid lg:grid-cols-12 gap-10">
+      <div class="lg:col-span-7">
+        <p class="text-xs tracking-[0.3em] uppercase text-clay-600 mb-3">Sua jornada</p>
+        <h2 class="font-display text-4xl md:text-5xl font-bold">Cofre de Saberes</h2>
+        <p class="mt-4 text-forest-700 max-w-xl">Cada lenda descoberta, cada relato semeado constrói sua trilha de conhecimento — uma guardiania digital do patrimônio vivo.</p>
+
+        <div class="mt-10 bg-white rounded-3xl p-6 md:p-8 ring-1 ring-forest-800/10">
+          <div class="flex items-center justify-between mb-3">
+            <p class="font-display text-xl">Trilha do Conhecimento</p>
+            <span class="text-sm font-semibold text-clay-600">85% completo</span>
+          </div>
+          <div class="h-2 rounded-full bg-creamdk overflow-hidden">
+            <div class="h-full bg-forest-800 rounded-full" style="width:85%"></div>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 text-sm">
+            <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-clay-600"></span> Origens Ancestrais</div>
+            <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-clay-600"></span> Cantos de Cura</div>
+            <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-clay-600"></span> Grafismos Sagrados</div>
+            <div class="flex items-center gap-2 opacity-50"><span class="w-2 h-2 rounded-full bg-forest-800/30"></span> Arquitetura da Oca</div>
+          </div>
+        </div>
+
+        <div class="mt-6 grid sm:grid-cols-3 gap-4">
+          <div class="bg-white rounded-2xl p-5 ring-1 ring-forest-800/10">
+            <div class="w-12 h-12 rounded-xl bg-clay-500/10 grid place-items-center text-clay-600 mb-3">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2 14 9h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z"/></svg>
+            </div>
+            <p class="font-semibold">Soberania da Onça</p>
+            <p class="text-xs opacity-70 mt-1">Conquista épica</p>
+          </div>
+          <div class="bg-white rounded-2xl p-5 ring-1 ring-forest-800/10">
+            <div class="w-12 h-12 rounded-xl bg-forest-700/10 grid place-items-center text-forest-700 mb-3">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8 6 8 10 12 14s4 8 0 8c-4 0-8-4-4-8s4-8 0-12z"/></svg>
+            </div>
+            <p class="font-semibold">Fluidez da Iara</p>
+            <p class="text-xs opacity-70 mt-1">Dom dos rios</p>
+          </div>
+          <div class="bg-white rounded-2xl p-5 ring-1 ring-forest-800/10 opacity-60">
+            <div class="w-12 h-12 rounded-xl bg-forest-800/10 grid place-items-center mb-3">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <p class="font-semibold">Sabedoria do Sol</p>
+            <p class="text-xs opacity-70 mt-1">3 lendas restantes</p>
+          </div>
+        </div>
+      </div>
+
+      <aside class="lg:col-span-5">
+        <div class="bg-forest-800 text-cream rounded-3xl p-6 md:p-8 sticky top-24">
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-2xl bg-clay-500/30 grid place-items-center font-display text-2xl">A</div>
+            <div>
+              <p class="font-display text-xl">Aruana Silva</p>
+              <p class="text-xs uppercase tracking-wider opacity-70">Guardiã Nível 4</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3 mt-6">
+            <div class="bg-forest-700 rounded-xl p-4">
+              <p class="font-display text-3xl text-clay-400">24</p>
+              <p class="text-xs uppercase tracking-wider opacity-70">Lendas descobertas</p>
+            </div>
+            <div class="bg-forest-700 rounded-xl p-4">
+              <p class="font-display text-3xl text-clay-400">12</p>
+              <p class="text-xs uppercase tracking-wider opacity-70">Relatos semeados</p>
+            </div>
+          </div>
+          <button class="btn-clay mt-6 w-full py-3 rounded-full text-sm font-semibold ring-focus">Ver galeria completa</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section id="pitch" class="py-20 md:py-28 bg-white dark:bg-forest-900 border-t border-forest-800/10">
+  <div class="max-w-7xl mx-auto px-5 md:px-8">
+    <div class="grid lg:grid-cols-12 gap-12 items-center">
+      
+      <div class="lg:col-span-5 reveal">
+        <p class="text-xs tracking-[0.3em] uppercase text-clay-600 mb-3">Apresentação Oficial</p>
+        <h2 class="font-display text-4xl md:text-5xl font-bold text-forest-900 dark:text-cream leading-tight">Nosso Pitch de Impacto</h2>
+        <div class="wave w-24 mt-4 mb-6"></div>
+        <p class="text-base text-forest-700 dark:text-cream/80 leading-relaxed mb-6">
+          Assista ao vídeo para compreender como o <strong>Portal das Origens</strong> alia tecnologia contemporânea e salvaguarda digital para manter vivas as vozes ancestrais do Brasil.
+        </p>
+
+        <div class="space-y-4">
+          <div class="flex gap-4">
+            <div class="w-8 h-8 rounded-full bg-clay-500/10 text-clay-600 font-bold flex items-center justify-center shrink-0">1</div>
+            <div>
+              <h4 class="font-semibold text-forest-800 dark:text-cream">O Desafio</h4>
+              <p class="text-sm text-forest-600 dark:text-cream/60 mt-0.5">O apagamento cultural sistemático e a necessidade de registrar narrativas orais sob a ótica dos próprios povos.</p>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <div class="w-8 h-8 rounded-full bg-clay-500/10 text-clay-600 font-bold flex items-center justify-center shrink-0">2</div>
+            <div>
+              <h4 class="font-semibold text-forest-800 dark:text-cream">A Proposta</h4>
+              <p class="text-sm text-forest-600 dark:text-cream/60 mt-0.5">Ambiente seguro, interativo e gamificado onde as comunidades guardam e gerenciam seu acervo intangível.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7 reveal">
+        <div class="bg-creamdk dark:bg-forest-800 p-4 md:p-6 rounded-[2rem] shadow-soft ring-1 ring-forest-800/10">
+          <div class="relative rounded-2xl overflow-hidden aspect-video bg-black shadow-inner">
+            <iframe 
+              class="absolute inset-0 w-full h-full" 
+              src="https://www.youtube.com/embed/PIUdzrCr0ug" 
+              title="Portal das Origens - Video Pitch" 
+              frameborder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              allowfullscreen>
+            </iframe>
+          </div>
+          <div class="mt-4 flex items-center justify-between px-2">
+            <div class="flex items-center gap-2">
+              <span class="inline-block w-2 h-2 rounded-full bg-clay-500 animate-pulse"></span>
+              <p class="text-xs uppercase tracking-wider font-semibold opacity-80">Pitch do Projeto</p>
+            </div>
+            <a href="https://youtu.be/PIUdzrCr0ug" target="_blank" class="text-xs font-medium text-clay-600 hover:underline flex items-center gap-1">
+              Assistir no YouTube
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="py-20 bg-cream">
+  <div class="max-w-3xl mx-auto px-5 md:px-8 text-center">
+    <div class="wave w-24 mx-auto mb-6"></div>
+    <h2 class="font-display text-3xl md:text-4xl font-bold">Receba histórias da floresta</h2>
+    <p class="mt-3 text-forest-700">Uma carta semanal, sem ruído, com relatos curados de pajés, anciãs e pesquisadores.</p>
+    <form id="newsForm" class="mt-8 flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+      <input required type="email" placeholder="seu@email.com" class="flex-1 px-5 py-3 rounded-full bg-creamdk dark:bg-forest-800 outline-none text-sm ring-focus"/>
+      <button class="btn-primary px-6 py-3 rounded-full text-sm font-semibold ring-focus">Quero receber</button>
+    </form>
+    <p id="newsOk" class="hide mt-4 text-sm text-clay-600">🌿 Seu broto foi semeado. Em breve, a primeira carta.</p>
+  </div>
+</section>
+
+<footer class="bg-forest-900 text-cream/80 py-14">
+  <div class="max-w-7xl mx-auto px-5 md:px-8 grid md:grid-cols-4 gap-10">
+    <div class="md:col-span-2">
+      <div class="flex items-center gap-2">
+        <svg viewBox="0 0 24 24" class="w-7 h-7 text-clay-400" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2c3 4 3 7 0 10s-3 6 0 10"/><path d="M2 12c4-3 7-3 10 0s6 3 10 0"/></svg>
+        <span class="font-display text-xl text-cream font-bold">Portal das Origens</span>
+      </div>
+      <p class="text-sm mt-4 max-w-sm opacity-70">Preservando a memória, honrando o futuro. Construído com curadoria nativa.</p>
+    </div>
+    <div>
+      <p class="text-xs uppercase tracking-wider text-cream mb-3">Explorar</p>
+      <ul class="space-y-2 text-sm">
+        <li><a href="#biblioteca" class="hover:text-clay-400">Biblioteca</a></li>
+        <li><a href="#cantos" class="hover:text-clay-400">Cantos</a></li>
+        <li><a href="#mapa" class="hover:text-clay-400">Mapa Etno</a></li>
+        <li><a href="#pitch" class="hover:text-clay-400">Pitch</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="max-w-7xl mx-auto px-5 md:px-8 mt-10 pt-6 border-t border-cream/10 text-xs opacity-60 flex flex-wrap justify-between gap-3">
+    <span>© 2026 Portal das Origens</span>
+    <span>Patrimônio vivo • Feito em Pindorama</span>
+  </div>
+</footer>
+
+<div id="readModal" class="hide fixed inset-0 z-50 bg-forest-900/80 backdrop-blur grid place-items-center p-4">
+  <div class="bg-cream dark:bg-forest-800 w-full max-w-2xl rounded-3xl p-6 md:p-8 shadow-soft relative max-h-[85vh] overflow-y-auto">
+    <button onclick="closeReadModal()" class="absolute top-4 right-4 w-9 h-9 grid place-items-center rounded-full bg-creamdk dark:bg-forest-700 hover:opacity-80">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <p id="modalCat" class="text-xs uppercase tracking-[0.3em] text-clay-600 mb-2">Categoria</p>
+    <h3 id="modalTitle" class="font-display text-3xl font-bold mb-4">Título da História</h3>
+    <div class="wave w-24 mb-6"></div>
+    <div id="modalBody" class="text-base text-forest-700 dark:text-cream/90 leading-relaxed space-y-4">
+      </div>
+  </div>
+</div>
+
+<div id="composeModal" class="hide fixed inset-0 z-50 bg-forest-900/70 backdrop-blur grid place-items-center p-4">
+  <div class="bg-cream dark:bg-forest-800 w-full max-w-lg rounded-3xl p-6 md:p-8 shadow-ring relative">
+    <button onclick="closeCompose()" class="absolute top-4 right-4 w-9 h-9 grid place-items-center rounded-full hover:bg-creamdk">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <p class="text-xs uppercase tracking-[0.3em] text-clay-600 mb-2">Semear relato</p>
+    <h3 class="font-display text-2xl mb-5">Qual memória você deseja compartilhar?</h3>
+    <form id="composeForm" class="space-y-4">
+      <input required name="author" placeholder="Seu nome / povo" class="w-full px-4 py-3 rounded-xl bg-creamdk dark:bg-forest-700 outline-none text-sm ring-focus"/>
+      <input required name="title" placeholder="Título do relato" class="w-full px-4 py-3 rounded-xl bg-creamdk dark:bg-forest-700 outline-none text-sm ring-focus"/>
+      <textarea required name="body" rows="4" placeholder="Conte sua vivência…" class="w-full px-4 py-3 rounded-xl bg-creamdk dark:bg-forest-700 outline-none text-sm resize-none ring-focus"></textarea>
+      <button class="btn-clay w-full py-3 rounded-full text-sm font-semibold ring-focus">Publicar no círculo</button>
+    </form>
+  </div>
+</div>
+
+<nav class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-forest-900 text-cream/80 border-t border-cream/10">
+  <div class="grid grid-cols-4 text-[10px] uppercase tracking-wider">
+    <a href="#home" class="flex flex-col items-center gap-1 py-3"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v10a2 2 0 0 1-2 2h-4v-7h-6v7H5a2 2 0 0 1-2-2z"/></svg>Portal</a>
+    <a href="#biblioteca" class="flex flex-col items-center gap-1 py-3 text-clay-400"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H4zM20 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/></svg>Biblioteca</a>
+    <a href="#fogueira" class="flex flex-col items-center gap-1 py-3"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Relatos</a>
+    <a href="#pitch" class="flex flex-col items-center gap-1 py-3"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 10l-4 4-2-2-4 4M21 3h-6v2h4v14H5v-4H3v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>Pitch</a>
+  </div>
+</nav>
+
+<script>
+/* ---------- DADOS DAS HISTÓRIAS (COM TEXTO COMPLETO PARA LEIA MAIS) ---------- */
+const stories = [
+  { id: 1, tag:'tupi', cat:'Tupi-Guarani', title:'O Nascimento das Estrelas', desc:'Uma lenda sobre a curiosidade e a transformação de crianças em pontos de luz.', fullText:'Há muito tempo, na grande aldeia, as crianças eram extremamente curiosas. Certa noite, ao seguirem um rastro luminoso pela floresta escondidas dos adultos, descobriram uma clareira sagrada. Diante do espanto com os mistérios da noite, seus corpos começaram a flutuar levemente, transformando-se uma a uma em pontos brilhantes que subiram ao firmamento. É por isso que os anciãos olham para o céu e dizem que as estrelas são os olhos das crianças vigiando nosso sono.', read:'8 min', featured:false, img:'https://images.unsplash.com/photo-1502134249126-9f3755a50d78?auto=format&fit=crop&w=900&q=80', fav:true },
+  { id: 2, tag:'yano', cat:'Yanomami', title:'O Guardião da Floresta', desc:'Relatos sagrados sobre o equilíbrio entre os seres humanos e os espíritos que habitam as matas.', fullText:'Para o povo Yanomami, a floresta não é apenas árvores e terra, ela possui uma alma viva chamada Omama. Os espíritos auxiliares, os Xapiri, dançam nos espelhos invisíveis do xamã para manter o céu em seu devido lugar. Quando a árvore cai sem motivo ou o rio adoece, o guardião sabe que o equilíbrio foi quebrado. Preservar este conhecimento é a garantia de que o teto do mundo não desabe sobre nossas cabeças.', read:'12 min', img:'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=900&q=80' },
+  { id: 3, tag:'mitos', cat:'Mitos de Criação', title:'A Arte do Barro Marajoara', desc:'Como a cerâmica Marajoara carrega segredos da cosmologia e a identidade de gerações.', fullText:'A argila moldada pelas mãos hábeis das mulheres da Ilha de Marajó reconta os caminhos da grande cobra do mundo. Cada corte geométrico, cada cor natural extraída do urucum e do caulim representa labirintos espirituais e transformações zoomórficas. Um vaso marajoara não armazena apenas água ou cinzas, ele encerra a assinatura visual de uma civilização que domou as águas e conversava com os elementais da fauna.', read:'5 min', img:'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=900&q=80' },
+  { id: 4, tag:'xingu', cat:'Xingu', title:'O Rio dos Ancestrais', desc:'Uma jornada épica através das águas que conectam o mundo físico ao espiritual, narrada por anciãos.', fullText:'Nas curvas sagradas dos rios do Xingu, reside a memória do tempo em que os animais e os homens falavam a mesma língua. Os peixes eram considerados primos distantes e os troncos das árvores serviam como pilares para o reflexo das estrelas. Cruzar essas águas requer respeito, cantos de permissão e a certeza de que somos apenas passageiros temporários de um ecossistema eterno.', read:'18 min', featured:true, img:'https://images.unsplash.com/photo-1500964757637-c85e8a162699?auto=format&fit=crop&w=900&q=80' },
+  { id: 5, tag:'grafia', cat:'Kayapó', title:'Pinturas que Falam', desc:'Os grafismos corporais como linguagem viva de pertencimento, proteção e status social.', fullText:'Os traços pretos do jenipapo e o vermelho vivo do urucum desenham na pele Kayapó a malha geométrica da própria floresta. Não se trata de adorno estético; são couraças de proteção espiritual e marcas de identidade. Um padrão aplicado nas costas pode indicar proteção para caça, enquanto traços delicados no rosto celebram ritos de passagem e casamentos. É a escrita nativa gravada diretamente no corpo.', read:'10 min', img:'https://images.unsplash.com/photo-1604881991720-f91add269bed?auto=format&fit=crop&w=900&q=80' }
+];
+
+const audioTracks = [
+  { src: 'https://assets.mixkit.co/active_storage/sfx/2448/2448-84.wav', name: 'Canto de Cura Yanomami', povo: 'Ritual Xapiri' },
+  { src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', name: 'Sinfonia da Mata', povo: 'Mundurucu' },
+  { src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', name: 'Ritual Xavante', povo: 'Xavante' },
+  { src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', name: 'Dança da Chuva', povo: 'Tikuna' },
+  { src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3', name: 'Canto das Mulheres Guarani', povo: 'Guarani' }
+];
+
+const feed = [
+  { who:'Pajé Txana Ikawa', where:'Povo Huni Kuin • Acre', title:'O Canto das Águas Claras', body:'Este relato traz a memória da primeira vez que o rio nos ensinou o caminho da cura. Escutem atentamente a frequência da água.', audio:true, hearts:114, comments:18 },
+  { who:'Kaê Guajajara', where:'Território Araribóia • Maranhão', title:'Tecendo o Futuro', body:'Nossas avós diziam que cada ponto é um dia de vida. Hoje retomamos os padrões que foram silenciados. Cada grafismo aqui recuperado é uma vitória.', tags:['#articulação','#grafismo'], img:'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?auto=format&fit=crop&w=900&q=80', hearts:342, comments:46 }
+];
+
+const regions = {
+  'rio-negro': { name:'Alto Rio Negro', people:'Tikuna (Magüta) • Tukano • Baré', desc:'Berço dos mitos das águas que conectam o mundo físico ao espiritual. Mais de 22 etnias coexistindo em três famílias linguísticas.' },
+  'xingu':     { name:'Parque do Xingu', people:'Kamayurá • Kuikuro • Yawalapiti', desc:'O primeiro grande território demarcado. Coração simbólico da resistência indígena no século XX.' },
+  'marajo':    { name:'Ilha de Marajó', people:'Cultura Marajoara', desc:'Arqueologia ceramista pré-colombiana sofisticada — vasos, urnas e tangas com geometria sagrada.' },
+  'acre':      { name:'Acre — Vale do Juruá', people:'Huni Kuin • Yawanawá', desc:'Cantos, medicinas, pinturas Kene. Cosmologia visual transmitida no corpo e na voz.' },
+  'chapada':   { name:'Cerrado Central', people:'Xavante • Bororo • Karajá', desc:'Casa do canto e do corpo pintado de urucum. Rituais de iniciação que estruturam a aldeia.' },
+  'maranhao':  { name:'Maranhão — Araribóia', people:'Guajajara • Awá-Guajá', desc:'Território de resistência e proteção florestal. Lar dos "Guardiões da Floresta".' }
+};
+
+/* ---------- RENDER DA BIBLIOTECA COM DETALHE DO LEIA MAIS ---------- */
+const grid = document.getElementById('storyGrid');
+function renderStories(filter='todos') {
+  grid.innerHTML = '';
+  const items = stories.filter(s => filter==='todos' || s.tag===filter);
+  items.forEach((s) => {
+    const featured = s.featured;
+    const card = document.createElement('article');
+    card.className = `reveal group bg-white dark:bg-forest-700 rounded-3xl overflow-hidden ring-1 ring-forest-800/10 hover:shadow-ring transition ${featured?'sm:col-span-2 lg:col-span-2 sm:flex':''}`;
+    card.innerHTML = `
+      <div class="${featured?'sm:w-1/2':''} relative aspect-[4/3] ${featured?'sm:aspect-auto':''} overflow-hidden">
+        <img src="${s.img}" alt="${s.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-700"/>
+        <span class="absolute top-3 left-3 text-[10px] uppercase tracking-[0.2em] bg-forest-900/70 text-cream px-3 py-1 rounded-full">${s.cat}</span>
+        <button class="fav absolute top-3 right-3 w-9 h-9 rounded-full grid place-items-center ${s.fav?'bg-clay-500 text-white':'bg-white/90 text-forest-800'}">
+          <svg class="w-4 h-4" fill="${s.fav?'currentColor':'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg>
+        </button>
+      </div>
+      <div class="p-5 ${featured?'sm:w-1/2 sm:p-8 flex flex-col justify-between':''}">
+        <div>
+          ${featured?'<p class="text-xs uppercase tracking-[0.3em] text-clay-600 mb-2">Destaque do mês</p>':''}
+          <h3 class="font-display text-xl ${featured?'md:text-3xl':''} font-bold leading-tight">${s.title}</h3>
+          <p class="text-sm text-forest-700 dark:text-cream/80 mt-2 line-clamp-3">${s.desc}</p>
+        </div>
+        <div class="mt-5 flex items-center justify-between border-t border-forest-800/10 pt-4">
+          <span class="text-xs uppercase tracking-wider opacity-70">${s.read}</span>
+          <button onclick="openReadModal(${s.id})" class="text-sm font-semibold text-clay-600 inline-flex items-center gap-1 hover:gap-2 transition-all">
+            ${featured?'Iniciar jornada':'Ler agora'} 
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+  card_fav_bind();
+  observeReveals();
+}
+
+/* Modal de Leia Mais */
+function openReadModal(id) {
+  const item = stories.find(s => s.id === id);
+  if(!item) return;
+  document.getElementById('modalCat').textContent = item.cat;
+  document.getElementById('modalTitle').textContent = item.title;
+  document.getElementById('modalBody').textContent = item.fullText;
+  document.getElementById('readModal').classList.remove('hide');
+}
+function closeReadModal() {
+  document.getElementById('readModal').classList.add('hide');
+}
+document.getElementById('readModal').addEventListener('click', e => { if(e.target.id === 'readModal') closeReadModal(); });
+
+function card_fav_bind() {
+  document.querySelectorAll('.fav').forEach(b => b.addEventListener('click', e=>{
+    e.preventDefault(); e.stopPropagation();
+    const on = b.classList.toggle('bg-clay-500');
+    b.classList.toggle('text-white', on);
+    b.classList.toggle('bg-white/90', !on);
+    b.classList.toggle('text-forest-800', !on);
+    b.querySelector('svg').setAttribute('fill', on?'currentColor':'none');
+  }));
+}
+
+/* ---------- MOTOR DE ÁUDIO REAL (FUNCIONANDO) ---------- */
+const audioElement = document.getElementById('ancestralAudio');
+const playBtn = document.getElementById('playBtn');
+const playIcon = document.getElementById('playI');
+const pauseIcon = document.getElementById('pauseI');
+const visualizer = document.getElementById('visualizerBars');
+const curTimeText = document.getElementById('curTime');
+const progressLine = document.getElementById('progress');
+
+function toggleAudio() {
+  if (audioElement.paused) {
+    audioElement.play().then(() => {
+      playIcon.classList.add('hide');
+      pauseIcon.classList.remove('hide');
+      visualizer.classList.add('playing');
+    }).catch(err => console.log("Interação prévia necessária para tocar áudio.", err));
+  } else {
+    audioElement.pause();
+    playIcon.classList.remove('hide');
+    pauseIcon.classList.add('hide');
+    visualizer.classList.remove('playing');
+  }
+}
+playBtn.addEventListener('click', toggleAudio);
+
+audioElement.addEventListener('timeupdate', () => {
+  const current = audioElement.currentTime;
+  const duration = audioElement.duration || 8;
+  const pct = (current / duration) * 100;
+  progressLine.style.width = pct + '%';
+  
+  const mins = Math.floor(current / 60);
+  const secs = Math.floor(current % 60).toString().padStart(2, '0');
+  curTimeText.textContent = `${mins}:${secs}`;
+});
+
+/* Troca de Faixa da Playlist */
+function changeTrack(index) {
+  const track = audioTracks[index];
+  audioElement.src = track.src;
+  document.getElementById('playerTitle').textContent = track.name;
+  document.getElementById('playerPovo').textContent = track.povo;
+  document.getElementById('totalTime').textContent = index === 0 ? '00:08' : '05:00';
+  
+  // Atualiza destaque na interface
+  document.querySelectorAll('#playlist li').forEach((li, idx) => {
+    li.className = `flex items-center gap-4 py-4 cursor-pointer hover:bg-cream/5 px-3 rounded-xl ${idx===index?'bg-cream/5':''}`;
+    const indicator = li.querySelector('.track-indicator');
+    if(idx === index) {
+      indicator.innerHTML = '<svg class="w-4 h-4 mx-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+      indicator.classList.add('text-clay-400');
+    } else {
+      indicator.textContent = idx + 1;
+      indicator.classList.remove('text-clay-400');
+    }
+  });
+
+  // Força o play automático da nova faixa
+  audioElement.play().then(() => {
+    playIcon.classList.add('hide');
+    pauseIcon.classList.remove('hide');
+    visualizer.classList.add('playing');
+  });
+}
+
+/* Monta a Playlist na UI */
+const pl = document.getElementById('playlist');
+audioTracks.forEach((t, idx) => {
+  const li = document.createElement('li');
+  li.className = `flex items-center gap-4 py-4 cursor-pointer hover:bg-cream/5 px-3 rounded-xl ${idx===0?'bg-cream/5':''}`;
+  li.onclick = () => changeTrack(idx);
+  li.innerHTML = `
+    <span class="track-indicator w-6 text-center text-xs ${idx===0?'text-clay-400':'opacity-50'}">${idx===0?'<svg class="w-4 h-4 mx-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>':idx+1}</span>
+    <div class="flex-1 min-w-0">
+      <p class="text-sm font-medium truncate ${idx===0?'text-clay-400':''}">${t.name}</p>
+      <p class="text-[10px] uppercase tracking-[0.25em] opacity-60 mt-0.5">${t.povo}</p>
+    </div>
+    <span class="text-xs opacity-70 tabular-nums">${idx===0?'00:08':'05:00'}</span>`;
+  pl.appendChild(li);
+});
+
+/* ---------- DEMAIS COMPONENTES ---------- */
+const feedEl = document.getElementById('feed');
+function renderFeed() {
+  feedEl.innerHTML = '';
+  feed.forEach(p => {
+    const el = document.createElement('article');
+    el.className = 'reveal bg-white dark:bg-forest-800 rounded-3xl p-6 md:p-8 ring-1 ring-forest-800/10';
+    el.innerHTML = `
+      <header class="flex items-center gap-3 mb-5">
+        <div class="w-10 h-10 rounded-full bg-clay-400/30 grid place-items-center font-display text-lg text-clay-700">${p.who[0]}</div>
+        <div>
+          <p class="font-semibold text-sm">${p.who}</p>
+          <p class="text-[10px] uppercase tracking-[0.25em] opacity-60">${p.where}</p>
+        </div>
+      </header>
+      ${p.title?`<h4 class="font-display text-xl mb-2">${p.title}</h4>`:''}
+      <p class="text-sm text-forest-700 dark:text-cream/80 leading-relaxed">${p.body}</p>
+      ${p.img?`<img src="${p.img}" alt="" class="mt-5 rounded-2xl w-full aspect-[16/9] object-cover"/>`:''}
+      <footer class="mt-5 pt-4 border-t border-forest-800/10 flex items-center gap-6 text-sm">
+        <button data-h class="flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-clay-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.6Z"/></svg><span>${p.hearts}</span></button>
+        <span class="ml-auto opacity-60 text-xs">Responder</span>
+      </footer>`;
+    feedEl.appendChild(el);
+  });
+  observeReveals();
+}
+
+function setRegion(k){ const r=regions[k]; document.getElementById('regionName').textContent=r.name; document.getElementById('regionPeople').textContent=r.people; document.getElementById('regionDesc').textContent=r.desc; }
+
+/* Filtros da Biblioteca */
+document.querySelectorAll('.filter-btn').forEach(b => b.addEventListener('click', ()=>{
+  document.querySelectorAll('.filter-btn').forEach(x => { x.classList.remove('bg-forest-800','text-cream'); x.classList.add('bg-sand','text-forest-800'); });
+  b.classList.add('bg-forest-800','text-cream'); b.classList.remove('bg-sand','text-forest-800');
+  renderStories(b.dataset.f);
+}));
+
+/* Search Bar */
+const searchBtn = document.getElementById('searchBtn');
+const searchBar = document.getElementById('searchBar');
+searchBtn.addEventListener('click', ()=>{ searchBar.classList.toggle('hide'); if(!searchBar.classList.contains('hide')) document.getElementById('searchInput').focus(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape') searchBar.classList.add('hide'); });
+
+/* Mobile menu */
+document.getElementById('menuBtn').addEventListener('click', ()=> document.getElementById('mobileMenu').classList.toggle('hide'));
+
+/* Theme control */
+const themeBtn = document.getElementById('themeBtn');
+function setTheme(t){ document.documentElement.classList.toggle('dark', t==='dark'); document.getElementById('iconSun').classList.toggle('hide', t!=='dark'); document.getElementById('iconMoon').classList.toggle('hide', t==='dark'); localStorage.po_theme=t; }
+themeBtn.addEventListener('click', ()=> setTheme(document.documentElement.classList.contains('dark')?'light':'dark'));
+setTheme(localStorage.po_theme || 'light');
+
+/* Compose Relatos */
+function openCompose(){ document.getElementById('composeModal').classList.remove('hide'); }
+function closeCompose(){ document.getElementById('composeModal').classList.add('hide'); }
+document.getElementById('composeForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  feed.unshift({ who: fd.get('author'), where:'Comunidade Portal', title: fd.get('title'), body: fd.get('body'), hearts:0, comments:0 });
+  closeCompose(); e.target.reset(); renderFeed();
+  document.getElementById('fogueira').scrollIntoView({behavior:'smooth'});
+});
+
+/* Newsletter */
+document.getElementById('newsForm').addEventListener('submit', e=>{ e.preventDefault(); e.target.reset(); document.getElementById('newsOk').classList.remove('hide'); });
+
+/* Scroll Observer */
+function observeReveals(){
+  const io = new IntersectionObserver((entries)=> entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } }), { threshold:0.12 });
+  document.querySelectorAll('.reveal:not(.in)').forEach(el=> io.observe(el));
+}
+
+renderStories();
+renderFeed();
+observeReveals();
+</script>
+</body>
+</html>
